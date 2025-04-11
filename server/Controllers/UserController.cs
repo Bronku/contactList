@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
     private UserStore _userStore;
@@ -14,8 +14,7 @@ public class UserController : ControllerBase
     [HttpGet]
     public IActionResult getUsers()
     {
-        IReadOnlyList<User> users = _userStore.getUsers();
-        return Ok(users);
+        return Ok(_userStore.getUsers());
     }
 
     [HttpPost]
@@ -26,11 +25,6 @@ public class UserController : ControllerBase
             return BadRequest("Invalid data.");
         }
         _userStore.addUser(user);
-
-        foreach (var u in _userStore.getUsers())
-        {
-            Console.WriteLine($"  Name: {u.Name}");
-        }
         return Ok($"Added User");
     }
 }

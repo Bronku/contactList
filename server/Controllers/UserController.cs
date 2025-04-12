@@ -34,6 +34,6 @@ public class UserController : ControllerBase
     public IActionResult newUser([FromBody] User user)
     {
         _userStore.addUser(user);
-        return CreatedAtAction(nameof(getUser), new { id = user.Id }, User);
+        return CreatedAtAction(nameof(getUser), new { Id = user.Id }, User);
     }
 }

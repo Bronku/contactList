@@ -14,17 +14,33 @@ public class SimpleIntegrationTest : IClassFixture<WebApplicationFactory<Program
     [Fact]
     public async Task RootApiUserRetursUsers()
     {
-        var response = await _client.GetAsync("/api/User");
+        var newContact = new User
+        {
+            Name = "Jan",
+            Surname = "Kowalski",
+            Email = "jan.test@example.com",
+            Password = "P@ssw0rd123!",
+            Category = ContactCategory.Business,
+            BusinessCategoryId = 1,
+            PhoneNumber = "+48 123 456 789",
+            DateOfBirth = new DateTime(1980, 5, 15),
+        };
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Equal("[]", content);
+        var response = await _client.PostAsJsonAsync("/api/User", newContact);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-        var user = new User { Name = "Jakub", Contact = "+48 508 442 510" };
-        var postContent = JsonContent.Create(user);
-        await _client.PostAsync("/api/User", postContent);
-        response = await _client.GetAsync("/api/User");
-        content = await response.Content.ReadAsStringAsync();
-        Assert.Equal("[{\"name\":\"Jakub\",\"contact\":\"+48 508 442 510\"}]", content);
+        Assert.True(response.Headers.TryGetValues("Location", out var locationHeaders));
+        Assert.NotNull(locationHeaders);
+        Assert.NotEmpty(locationHeaders);
+        var locationUri = new Uri(locationHeaders.First());
+
+        var getResponse = await _client.GetAsync(locationUri);
+        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+
+        var createdContact = await getResponse.Content.ReadFromJsonAsync<User>();
+        Assert.NotNull(createdContact);
+        Assert.Equal(newContact.Email, createdContact.Email);
+        Assert.Equal(newContact.BusinessCategoryId, createdContact.BusinessCategoryId);
+        Assert.True(createdContact.Id >= 0);
     }
 }

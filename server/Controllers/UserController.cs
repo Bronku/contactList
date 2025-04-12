@@ -17,14 +17,23 @@ public class UserController : ControllerBase
         return Ok(_userStore.getUsers());
     }
 
+    [HttpGet("{Id}")]
+    public IActionResult getUser(int Id)
+    {
+        try
+        {
+            return Ok(_userStore.getUserById(Id));
+        }
+        catch
+        {
+            return NotFound();
+        }
+    }
+
     [HttpPost]
     public IActionResult newUser([FromBody] User user)
     {
-        if (user == null)
-        {
-            return BadRequest("Invalid data.");
-        }
         _userStore.addUser(user);
-        return Ok($"Added User");
+        return CreatedAtAction(nameof(getUser), new { id = user.Id }, User);
     }
 }

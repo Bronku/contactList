@@ -7,12 +7,13 @@ public enum ContactCategory
     Other,
 }
 
-public class BusinessCategory
+public enum BusinessCategory
 {
-    public int Id { get; set; }
-
-    [Required]
-    public required string Name { get; set; }
+    Boss,
+    Client,
+    Manager,
+    Developer,
+    Hr,
 }
 
 public class User
@@ -37,11 +38,8 @@ public class User
     [Required]
     public ContactCategory Category { get; set; }
 
-    public int? BusinessCategoryId { get; set; }
     public BusinessCategory? BusinessCategory { get; set; }
-    public string? CustomCategory { get; set; }
 
-    [Required]
     public DateTime? DateOfBirth { get; set; }
 
     [Required]

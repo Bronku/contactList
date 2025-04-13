@@ -4,36 +4,36 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private UserStore _userStore;
+    private readonly ApplicationDbContext _db;
 
-    public UserController(UserStore userStore)
+    public UserController(ApplicationDbContext db)
     {
-        _userStore = userStore;
+        _db = db;
     }
 
     [HttpGet]
     public IActionResult getUsers()
     {
-        return Ok(_userStore.getUsers());
+        var users = _db.Users.OrderBy(u => u.Id).ToList();
+        return Ok(users);
     }
 
     [HttpGet("{Id}")]
     public IActionResult getUser(int Id)
     {
-        try
+        var user = _db.Users.FirstOrDefault(u => u.Id == Id);
+        if (user == null)
         {
-            return Ok(_userStore.getUserById(Id));
+            return NotFound($"User {Id} not found");
         }
-        catch
-        {
-            return NotFound();
-        }
+        return Ok(user);
     }
 
     [HttpPost]
     public IActionResult newUser([FromBody] User user)
     {
-        _userStore.addUser(user);
-        return CreatedAtAction(nameof(getUser), new { Id = user.Id }, User);
+        _db.Add(user);
+        _db.SaveChanges();
+        return CreatedAtAction(nameof(getUser), new { Id = user.Id }, user);
     }
 }

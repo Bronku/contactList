@@ -4,5 +4,10 @@
 - [ ] authentication
 - [ ] authorization
 - [ ] a better location for .db
+- [ ] deal with cors
 # ui
-- [ ] create one?
+- [X] create one?
+- [ ] adding users
+- [ ] modifying users
+- [ ] login page
+- [ ] logout button

@@ -9,9 +9,20 @@ public partial class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                "AllowSpecificOrigin",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+                }
+            );
+        });
 
         var app = builder.Build();
         app.UseRouting();
+        app.UseCors("AllowSpecificOrigin");
         app.MapControllers();
 
         if (app.Environment.IsDevelopment())

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
 const data = ref(null);
-const loading = ref(null);
 const error = ref(null);
 const fetchData = async () => {
   try {
@@ -10,10 +9,9 @@ const fetchData = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     data.value = await response.json();
+    console.log(data.value);
   } catch (e) {
     error.value = e;
-  } finally {
-    loading.value = false;
   }
 };
 
@@ -28,12 +26,22 @@ onMounted(() => {
   </header>
 
   <main>
-    <ul v-if="data">
-      <li v-for="item in data" :key="item.id">
-        {{ item.name }} {{ item.phoneNumber }}
-      </li>
-    </ul>
-    <p v-else-if="loading">Loading data...</p>
+    <table v-if="data">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Surname</th>
+          <th>PhoneNumber</th>
+        </tr>
+      </thead>
+      <tr v-for="item in data" :key="item.id">
+        <th>{{ item.id }}</th>
+        <th>{{ item.name }}</th>
+        <th>{{ item.surname }}</th>
+        <th>{{ item.phoneNumber }}</th>
+      </tr>
+    </table>
     <p v-else-if="error">Error fetching data: {{ error }}</p>
   </main>
 </template>

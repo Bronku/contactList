@@ -1,8 +1,12 @@
 <script setup>
 import { ref, onMounted, provide } from "vue";
 import Table from "./components/Table.vue";
+import Details from "./components/Details.vue";
 const data = ref(null);
 const error = ref(null);
+const selected = ref({});
+provide("data", data);
+provide("selected", selected);
 const fetchData = async () => {
   try {
     const response = await fetch("http://localhost:8080/api/User");
@@ -19,7 +23,6 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData();
 });
-provide("data", data);
 </script>
 
 <template>
@@ -28,6 +31,7 @@ provide("data", data);
   </header>
 
   <main>
+    <Details v-if="selected.value" />
     <Table v-if="data" />
     <p v-else-if="error">Error fetching data: {{ error }}</p>
   </main>

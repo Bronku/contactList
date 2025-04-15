@@ -23,7 +23,7 @@ async function handleSubmit() {
   isSubmitting.value = true;
   try {
     const response = await fetch(`${API_BASE_URL}/User`, {
-      method: "POST",
+      method: props.creatingContact ? "POST" : "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });

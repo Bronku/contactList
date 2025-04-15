@@ -36,4 +36,12 @@ public class UserController : ControllerBase
         _db.SaveChanges();
         return CreatedAtAction(nameof(getUser), new { Id = user.Id }, user);
     }
+
+    [HttpPut]
+    public IActionResult updateUser([FromBody] User user)
+    {
+        _db.Update(user);
+        _db.SaveChanges();
+        return CreatedAtAction(nameof(getUser), new { Id = user.Id }, user);
+    }
 }

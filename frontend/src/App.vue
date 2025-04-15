@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, provide } from "vue";
+import Table from "./components/Table.vue";
 const data = ref(null);
 const error = ref(null);
 const fetchData = async () => {
@@ -18,6 +19,7 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData();
 });
+provide("data", data);
 </script>
 
 <template>
@@ -26,22 +28,7 @@ onMounted(() => {
   </header>
 
   <main>
-    <table v-if="data">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Name</th>
-          <th>Surname</th>
-          <th>PhoneNumber</th>
-        </tr>
-      </thead>
-      <tr v-for="item in data" :key="item.id">
-        <th>{{ item.id }}</th>
-        <th>{{ item.name }}</th>
-        <th>{{ item.surname }}</th>
-        <th>{{ item.phoneNumber }}</th>
-      </tr>
-    </table>
+    <Table v-if="data" />
     <p v-else-if="error">Error fetching data: {{ error }}</p>
   </main>
 </template>

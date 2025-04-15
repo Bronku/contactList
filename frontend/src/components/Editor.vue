@@ -1,43 +1,65 @@
 <script setup>
+import { reactive, watch } from "vue";
 const props = defineProps({
   contact: Object,
   creatingContact: Boolean,
 });
+
 const emit = defineEmits(["close"]);
+const form = reactive({});
+watch(
+  () => props.contact,
+  (newContact) => {
+    Object.assign(form, newContact);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
   <h2>{{ creatingContact ? "New" : "Edit" }}</h2>
-  <ul>
-    <li>
-      <span>businessCategory</span> <br /><span>{{
-        contact.businessCategory
-      }}</span>
-    </li>
-    <li>
-      <span>category</span> <br /><span>{{ contact.category }}</span>
-    </li>
-    <li>
-      <span>dateOfBirth</span> <br /><span>{{ contact.dateOfBirth }}</span>
-    </li>
-    <li>
-      <span>email</span> <br /><span>{{ contact.email }}</span>
-    </li>
-    <li>
-      <span>id</span> <br /><span>{{ contact.id }}</span>
-    </li>
-    <li>
-      <span>name</span> <br /><span>{{ contact.name }}</span>
-    </li>
-    <li>
-      <span>password</span> <br /><span>{{ contact.password }}</span>
-    </li>
-    <li>
-      <span>phoneNumber</span> <br /><span>{{ contact.phoneNumber }}</span>
-    </li>
-    <li>
-      <span>surname</span> <br /><span>{{ contact.surname }}</span>
-    </li>
-  </ul>
-  <button @click.prevent="emit('close')">close</button>
+  <form @submit.prevent>
+    <ul>
+      <li>
+        <label>Business Category</label><br />
+        <input v-model="form.businessCategory" />
+      </li>
+      <li>
+        <label>Category</label><br />
+        <input v-model="form.category" />
+      </li>
+      <li>
+        <label>Date of Birth</label><br />
+        <input v-model="form.dateOfBirth" type="date" />
+      </li>
+      <li>
+        <label>Email</label><br />
+        <input v-model="form.email" type="email" />
+      </li>
+      <li>
+        <label>ID</label><br />
+        <input v-model="form.id" :readonly="!creatingContact" />
+      </li>
+      <li>
+        <label>Name</label><br />
+        <input v-model="form.name" />
+      </li>
+      <li>
+        <label>Password</label><br />
+        <input v-model="form.password" type="password" />
+      </li>
+      <li>
+        <label>Phone Number</label><br />
+        <input v-model="form.phoneNumber" />
+      </li>
+      <li>
+        <label>Surname</label><br />
+        <input v-model="form.surname" />
+      </li>
+    </ul>
+    <button type="submit">
+      {{ creatingContact ? "Create" : "Update" }}
+    </button>
+    <button type="button" @click="emit('close')">Close</button>
+  </form>
 </template>

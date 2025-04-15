@@ -1,12 +1,13 @@
 <script setup>
 const props = defineProps({
   contact: Object,
+  creatingContact: Boolean,
 });
 const emit = defineEmits(["close"]);
 </script>
 
 <template>
-  <h2>Edit</h2>
+  <h2>{{ creatingContact ? "New" : "Edit" }}</h2>
   <ul>
     <li>
       <span>businessCategory</span> <br /><span>{{

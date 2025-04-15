@@ -7,6 +7,7 @@ const contacts = ref(null);
 const error = ref(null);
 const selectedContact = ref(null);
 const editedContact = ref(null);
+const creatingContact = ref(false);
 
 async function fetchData() {
   try {
@@ -40,6 +41,22 @@ function editContact(item) {
   contact.phoneNumber = item.phoneNumber;
   contact.surname = item.surname;
   editedContact.value = contact;
+  creatingContact.value = false;
+}
+
+function newContact() {
+  const contact = {};
+  contact.businessCategory = "";
+  contact.category = "";
+  contact.dateOfBirth = "";
+  contact.email = "";
+  contact.id = "";
+  contact.name = "";
+  contact.password = "";
+  contact.phoneNumber = "";
+  contact.surname = "";
+  editedContact.value = contact;
+  creatingContact.value = true;
 }
 
 function closeEditor() {
@@ -57,9 +74,11 @@ onMounted(() => {
   </header>
 
   <main>
+    <button v-if="!editedContact" @click.prevent="newContact">new</button>
     <Editor
       v-if="editedContact"
       :contact="editedContact"
+      :creating-contact="creatingContact"
       @close="closeEditor"
     />
     <Details

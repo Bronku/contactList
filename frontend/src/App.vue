@@ -14,7 +14,6 @@ const fetchData = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     data.value = await response.json();
-    console.log(data.value);
   } catch (e) {
     error.value = e;
   }

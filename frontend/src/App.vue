@@ -1,19 +1,18 @@
 <script setup>
-import { ref, onMounted, provide } from "vue";
+import { ref, onMounted } from "vue";
 import Table from "./components/Table.vue";
 import Details from "./components/Details.vue";
-const data = ref(null);
+const contacts = ref(null);
 const error = ref(null);
-const selected = ref({});
-provide("data", data);
-provide("selected", selected);
+const selectedContact = ref(null);
+
 const fetchData = async () => {
   try {
     const response = await fetch("http://localhost:8080/api/User");
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    data.value = await response.json();
+    contacts.value = await response.json();
   } catch (e) {
     error.value = e;
   }
@@ -22,6 +21,14 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData();
 });
+
+const selectContact = (item) => {
+  console.log(item);
+};
+
+const closeDetails = () => {
+  selectedContact.value = null;
+};
 </script>
 
 <template>
@@ -30,8 +37,16 @@ onMounted(() => {
   </header>
 
   <main>
-    <Details v-if="selected.value" />
-    <Table v-if="data" />
+    <Details
+      v-if="selectedContact"
+      :contact="selectedContact"
+      @close="closeDetails"
+    />
+    <Table
+      v-if="contacts"
+      :contacts="contacts"
+      @select-contact="selectContact"
+    />
     <p v-else-if="error">Error fetching data: {{ error }}</p>
   </main>
 </template>

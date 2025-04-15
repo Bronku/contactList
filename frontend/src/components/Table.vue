@@ -1,7 +1,8 @@
 <script setup>
-import { inject } from "vue";
-const data = inject("data");
-const selected = inject("selected");
+defineProps({
+  contacts: Array,
+});
+const emit = defineEmits(["selectContact"]);
 </script>
 
 <template>
@@ -14,13 +15,15 @@ const selected = inject("selected");
         <th>PhoneNumber</th>
       </tr>
     </thead>
-    <tr v-for="item in data" :key="item.id">
+    <tr v-for="contact in contacts" :key="contact.id">
       <th>
-        <button @click.prevent="selected.value = item">{{ item.id }}</button>
+        <button @click.prevent="emit('selectContact', contact)">
+          {{ contact.id }}
+        </button>
       </th>
-      <th>{{ item.name }}</th>
-      <th>{{ item.surname }}</th>
-      <th>{{ item.phoneNumber }}</th>
+      <th>{{ contact.name }}</th>
+      <th>{{ contact.surname }}</th>
+      <th>{{ contact.phoneNumber }}</th>
     </tr>
   </table>
 </template>

@@ -80,6 +80,7 @@ onMounted(() => {
       :contact="editedContact"
       :creating-contact="creatingContact"
       @close="closeEditor"
+      @reload="fetchData"
     />
     <Details
       v-if="selectedContact"

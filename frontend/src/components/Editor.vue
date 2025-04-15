@@ -5,7 +5,7 @@ const props = defineProps({
   creatingContact: Boolean,
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "reload"]);
 const form = reactive({});
 watch(
   () => props.contact,
@@ -28,6 +28,7 @@ async function handleSubmit() {
       throw new Error(`Failed to save contact, ${errorMessage}`);
     }
     alert("Contact saved!");
+    emit("reload");
     emit("close");
   } catch (error) {
     console.error(error);

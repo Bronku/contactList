@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, watch, ref } from "vue";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const props = defineProps({
   contact: Object,
   creatingContact: Boolean,
@@ -21,8 +22,7 @@ async function handleSubmit() {
   }
   isSubmitting.value = true;
   try {
-    console.log(JSON.parse(JSON.stringify(form)));
-    const response = await fetch("http://localhost:8080/api/User", {
+    const response = await fetch(`${API_BASE_URL}/User`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),

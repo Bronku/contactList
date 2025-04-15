@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import Table from "./components/Table.vue";
 import Details from "./components/Details.vue";
 import Editor from "./components/Editor.vue";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const contacts = ref(null);
 const error = ref(null);
 const selectedContact = ref(null);
@@ -11,7 +13,7 @@ const creatingContact = ref(false);
 
 async function fetchData() {
   try {
-    const response = await fetch("http://localhost:8080/api/User");
+    const response = await fetch(`${API_BASE_URL}/User`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

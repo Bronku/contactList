@@ -7,7 +7,7 @@
 - [ ] deal with cors
 # ui
 - [X] create one?
-- [ ] adding users
-- [ ] modifying users
+- [x] adding users
+- [x] modifying users
 - [ ] login page
 - [ ] logout button

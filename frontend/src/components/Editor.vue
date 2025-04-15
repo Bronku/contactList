@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, watch } from "vue";
+import { reactive, watch, ref } from "vue";
 const props = defineProps({
   contact: Object,
   creatingContact: Boolean,
@@ -7,6 +7,7 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "reload"]);
 const form = reactive({});
+const isSubmitting = ref(false);
 watch(
   () => props.contact,
   (newContact) => {
@@ -15,6 +16,10 @@ watch(
   { immediate: true },
 );
 async function handleSubmit() {
+  if (isSubmitting.value) {
+    return;
+  }
+  isSubmitting.value = true;
   try {
     console.log(JSON.parse(JSON.stringify(form)));
     const response = await fetch("http://localhost:8080/api/User", {
@@ -32,6 +37,8 @@ async function handleSubmit() {
     emit("close");
   } catch (error) {
     console.error(error);
+  } finally {
+    isSubmitting.value = false;
   }
 }
 </script>
@@ -77,8 +84,8 @@ async function handleSubmit() {
         <input v-model="form.surname" />
       </li>
     </ul>
-    <button type="submit">
-      {{ creatingContact ? "Create" : "Update" }}
+    <button type="submit" :disabled="isSubmitting">
+      {{ isSubmitting ? "Saving" : "Save" }}
     </button>
     <button type="button" @click="emit('close')">Close</button>
   </form>

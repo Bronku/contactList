@@ -14,19 +14,38 @@ watch(
   },
   { immediate: true },
 );
+async function handleSubmit() {
+  try {
+    console.log(JSON.parse(JSON.stringify(form)));
+    const response = await fetch("http://localhost:8080/api/User", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Failed to save contact, ${errorMessage}`);
+    }
+    alert("Contact saved!");
+    emit("close");
+  } catch (error) {
+    console.error(error);
+  }
+}
 </script>
 
 <template>
   <h2>{{ creatingContact ? "New" : "Edit" }}</h2>
-  <form @submit.prevent>
+  <form @submit.prevent="handleSubmit">
     <ul>
       <li>
         <label>Business Category</label><br />
-        <input v-model="form.businessCategory" />
+        <input v-model="form.businessCategory" type="number" />
       </li>
       <li>
         <label>Category</label><br />
-        <input v-model="form.category" />
+        <input v-model="form.category" type="number" />
       </li>
       <li>
         <label>Date of Birth</label><br />
@@ -38,7 +57,7 @@ watch(
       </li>
       <li>
         <label>ID</label><br />
-        <input v-model="form.id" :readonly="!creatingContact" />
+        <input v-model="form.id" :readonly="!creatingContact" type="number" />
       </li>
       <li>
         <label>Name</label><br />

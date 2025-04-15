@@ -2,11 +2,13 @@
 import { ref, onMounted } from "vue";
 import Table from "./components/Table.vue";
 import Details from "./components/Details.vue";
+import Editor from "./components/Editor.vue";
 const contacts = ref(null);
 const error = ref(null);
 const selectedContact = ref(null);
+const editedContact = ref(null);
 
-const fetchData = async () => {
+async function fetchData() {
   try {
     const response = await fetch("http://localhost:8080/api/User");
     if (!response.ok) {
@@ -16,19 +18,37 @@ const fetchData = async () => {
   } catch (e) {
     error.value = e;
   }
-};
+}
+
+function selectContact(item) {
+  selectedContact.value = item;
+}
+
+function closeDetails() {
+  selectedContact.value = null;
+}
+
+function editContact(item) {
+  const contact = {};
+  contact.businessCategory = item.businessCategory;
+  contact.category = item.category;
+  contact.dateOfBirth = item.dateOfBirth;
+  contact.email = item.email;
+  contact.id = item.id;
+  contact.name = item.name;
+  contact.password = item.password;
+  contact.phoneNumber = item.phoneNumber;
+  contact.surname = item.surname;
+  editedContact.value = contact;
+}
+
+function closeEditor() {
+  editedContact.value = null;
+}
 
 onMounted(() => {
   fetchData();
 });
-
-const selectContact = (item) => {
-  console.log(item);
-};
-
-const closeDetails = () => {
-  selectedContact.value = null;
-};
 </script>
 
 <template>
@@ -37,10 +57,16 @@ const closeDetails = () => {
   </header>
 
   <main>
+    <Editor
+      v-if="editedContact"
+      :contact="editedContact"
+      @close="closeEditor"
+    />
     <Details
       v-if="selectedContact"
       :contact="selectedContact"
       @close="closeDetails"
+      @edit-contact="editContact"
     />
     <Table
       v-if="contacts"

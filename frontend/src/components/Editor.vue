@@ -2,11 +2,11 @@
 const props = defineProps({
   contact: Object,
 });
-const emit = defineEmits(["close", "editContact"]);
+const emit = defineEmits(["close"]);
 </script>
 
 <template>
-  <h2>Details</h2>
+  <h2>Edit</h2>
   <ul>
     <li>
       <span>businessCategory</span> <br /><span>{{
@@ -39,5 +39,4 @@ const emit = defineEmits(["close", "editContact"]);
     </li>
   </ul>
   <button @click.prevent="emit('close')">close</button>
-  <button @click.prevent="emit('editContact', contact)">edit</button>
 </template>

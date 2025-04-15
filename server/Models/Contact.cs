@@ -16,7 +16,7 @@ public enum BusinessCategory
     Hr,
 }
 
-public class User
+public class Contact
 {
     public int? Id { get; set; }
 

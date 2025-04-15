@@ -13,7 +13,7 @@ const creatingContact = ref(false);
 
 async function fetchData() {
   try {
-    const response = await fetch(`${API_BASE_URL}/User`);
+    const response = await fetch(`${API_BASE_URL}/Contact`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

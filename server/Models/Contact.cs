@@ -18,10 +18,10 @@ public enum BusinessCategory
     Hr
 }
 
+// MaxLength of 2048 seems reasonable for any contact information string, and setting it in advance is faster
 public class Contact
 {
     public int? Id { get; init; }
-
     [Required] [MaxLength(2048)] public required string Name { get; init; }
 
     [Required] [MaxLength(2048)] public required string Surname { get; init; }
@@ -40,9 +40,8 @@ public class Contact
     [Required] public ContactCategory Category { get; init; }
 
     public BusinessCategory? BusinessCategory { get; init; }
-   
-    [MaxLength(2048)] 
-    public string? OtherCategory { get; init; }
+
+    [MaxLength(2048)] public string? OtherCategory { get; init; }
 
     public DateTime? DateOfBirth { get; init; }
 

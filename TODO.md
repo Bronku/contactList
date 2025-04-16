@@ -1,6 +1,8 @@
 # server
 - [ ] category validation
 - [ ] automatic id assignment
+- [ ] other category field in ui
+- [ ] entry deletion
 - [x] password hashing
 - [x] authentication
 - [x] authorization
@@ -18,8 +20,8 @@
 - [x] initial users
 - [x] define public and protected routes
 # cleanup
-- [ ] a better location for .db
-- [ ] deal with cors
+- [x] a better location for .db
+- [x] deal with cors
 - [ ] refactor frontend
 - [ ] uniform .js config
 - [ ] a way to add new users

@@ -1,4 +1,5 @@
 <script setup>
+import { authStore } from "@/stores/auth";
 const props = defineProps({
   contact: Object,
 });
@@ -39,5 +40,10 @@ const emit = defineEmits(["close", "editContact"]);
     </li>
   </ul>
   <button @click.prevent="emit('close')">close</button>
-  <button @click.prevent="emit('editContact', contact)">edit</button>
+  <button
+    @click.prevent="emit('editContact', contact)"
+    :disabled="!authStore.isAuthenticated()"
+  >
+    edit
+  </button>
 </template>

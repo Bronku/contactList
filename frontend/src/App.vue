@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import Table from "./components/Table.vue";
 import Details from "./components/Details.vue";
 import Editor from "./components/Editor.vue";
+import LoginDialog from "./components/LoginDialog.vue";
+import { authStore } from "./stores/auth";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const contacts = ref(null);
@@ -76,7 +78,14 @@ onMounted(() => {
   </header>
 
   <main>
-    <button v-if="!editedContact" @click.prevent="newContact">new</button>
+    <LoginDialog v-if="!authStore.isAuthenticated()" />
+    <button
+      v-if="!editedContact"
+      @click.prevent="newContact"
+      :disabled="!authStore.isAuthenticated()"
+    >
+      new
+    </button>
     <Editor
       v-if="editedContact"
       :contact="editedContact"

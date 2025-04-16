@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, watch, ref } from "vue";
+import { authStore } from "@/stores/auth";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const props = defineProps({
   contact: Object,
@@ -24,7 +25,10 @@ async function handleSubmit() {
   try {
     const response = await fetch(`${API_BASE_URL}/Contact`, {
       method: props.creatingContact ? "POST" : "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authStore.token}`,
+      },
       body: JSON.stringify(form),
     });
 

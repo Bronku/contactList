@@ -2,18 +2,22 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using server.Data;
+using server.Models;
 
-public partial class Program
+namespace server;
+
+public static class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         var config = builder.Configuration;
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
-        var credentails = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         // #todo: check if a static value needs to be a singleton, or can it be handled in some other way?
-        builder.Services.AddSingleton(credentails);
+        builder.Services.AddSingleton(credentials);
         builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         builder.Services.AddDbContext<ApplicationDbContext>();
         builder.Services.AddControllers();
@@ -38,9 +42,9 @@ public partial class Program
         {
             options.AddPolicy(
                 "AllowSpecificOrigin",
-                builder =>
+                corsPolicyBuilder =>
                 {
-                    builder
+                    corsPolicyBuilder
                         .WithOrigins("http://localhost:5173")
                         .AllowAnyHeader()
                         .AllowAnyMethod()

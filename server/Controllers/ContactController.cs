@@ -1,52 +1,49 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using server.Data;
+using server.Models;
+
+namespace server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ContactController : ControllerBase
+public class ContactController(ApplicationDbContext db) : ControllerBase
 {
-    private readonly ApplicationDbContext _db;
-
-    public ContactController(ApplicationDbContext db)
-    {
-        _db = db;
-    }
-
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult getContacts()
+    public IActionResult GetContacts()
     {
-        var users = _db.Contacts.OrderBy(u => u.Id).ToList();
+        var users = db.Contacts.OrderBy(u => u.Id).ToList();
         return Ok(users);
     }
 
-    [HttpGet("{Id}")]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public IActionResult getContact(int Id)
+    public IActionResult GetContact(int id)
     {
-        var contact = _db.Contacts.FirstOrDefault(u => u.Id == Id);
+        var contact = db.Contacts.FirstOrDefault(u => u.Id == id);
         if (contact == null)
         {
-            return NotFound($"Contact {Id} not found");
+            return NotFound($"Contact {id} not found");
         }
         return Ok(contact);
     }
 
     [HttpPost]
     [Authorize]
-    public IActionResult newContact([FromBody] Contact contact)
+    public IActionResult NewContact([FromBody] Contact contact)
     {
-        _db.Add(contact);
-        _db.SaveChanges();
-        return CreatedAtAction(nameof(getContact), new { Id = contact.Id }, contact);
+        db.Add(contact);
+        db.SaveChanges();
+        return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);
     }
 
     [HttpPut]
     [Authorize]
-    public IActionResult updateContact([FromBody] Contact contact)
+    public IActionResult UpdateContact([FromBody] Contact contact)
     {
-        _db.Update(contact);
-        _db.SaveChanges();
-        return CreatedAtAction(nameof(getContact), new { Id = contact.Id }, contact);
+        db.Update(contact);
+        db.SaveChanges();
+        return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);
     }
 }

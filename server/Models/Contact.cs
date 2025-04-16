@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+namespace server.Models;
+
 public enum ContactCategory
 {
     Business,
@@ -18,31 +20,36 @@ public enum BusinessCategory
 
 public class Contact
 {
-    public int? Id { get; set; }
+    public int? Id { get; init; }
 
     [Required]
-    public required string Name { get; set; }
+    [MaxLength(2048)]
+    public required string Name { get; init; }
 
     [Required]
-    public required string Surname { get; set; }
+    [MaxLength(2048)]
+    public required string Surname { get; init; }
 
     [Required]
     [EmailAddress]
-    public required string Email { get; set; }
+    [MaxLength(2048)]
+    public required string Email { get; init; }
 
     [Required]
     [MinLength(8)]
+    [MaxLength(2048)]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$")]
-    public required string Password { get; set; }
+    public required string Password { get; init; }
 
     [Required]
-    public ContactCategory Category { get; set; }
+    public ContactCategory Category { get; init; }
 
-    public BusinessCategory? BusinessCategory { get; set; }
+    public BusinessCategory? BusinessCategory { get; init; }
 
-    public DateTime? DateOfBirth { get; set; }
+    public DateTime? DateOfBirth { get; init; }
 
     [Required]
     [Phone]
-    public required string PhoneNumber { get; set; }
+    [MaxLength(2048)]
+    public required string PhoneNumber { get; init; }
 }

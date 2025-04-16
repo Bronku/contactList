@@ -4,51 +4,44 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using server.Data;
+using server.Models;
+
+namespace server.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(
+    ApplicationDbContext db,
+    SigningCredentials credentials,
+    IPasswordHasher<User> hasher)
+    : ControllerBase
 {
-    private readonly ApplicationDbContext _db;
-    private readonly SigningCredentials _credentials;
-    private readonly IPasswordHasher<User> _hasher;
-
-    public AuthController(
-        ApplicationDbContext db,
-        SigningCredentials credentials,
-        IPasswordHasher<User> hasher
-    )
-    {
-        _db = db;
-        _credentials = credentials;
-        _hasher = hasher;
-    }
-
     public class LoginCredentials
     {
-        public required string username { get; set; }
-        public required string password { get; set; }
+        public required string Username { get; init; }
+        public required string Password { get; init; }
     }
 
     [HttpPost]
     [AllowAnonymous]
-    public IActionResult login([FromBody] LoginCredentials loginCredentials)
+    public IActionResult Login([FromBody] LoginCredentials loginCredentials)
     {
-        var user = _db.Users.FirstOrDefault(u => u.Username == loginCredentials.username);
+        var user = db.Users.FirstOrDefault(u => u.Username == loginCredentials.Username);
         if (user == null)
         {
-            return NotFound($"User {loginCredentials.username} not found");
+            return NotFound($"User {loginCredentials.Username} not found");
         }
 
         // should never happen, and this property is required in database, and so every query should return it
         if (user.PasswordHash == null)
         {
-            return NotFound($"Couldn't find password hash for user {loginCredentials.username}");
+            return NotFound($"Couldn't find password hash for user {loginCredentials.Username}");
         }
-        var result = _hasher.VerifyHashedPassword(
+        var result = hasher.VerifyHashedPassword(
             user,
             user.PasswordHash,
-            loginCredentials.password
+            loginCredentials.Password
         );
         if (result != PasswordVerificationResult.Success)
         {
@@ -58,10 +51,10 @@ public class AuthController : ControllerBase
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
 
         var token = new JwtSecurityToken(
-            /*claims not sctrictly necessary*/
+            /*claims not strictly necessary*/
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: _credentials
+            signingCredentials: credentials
         );
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);

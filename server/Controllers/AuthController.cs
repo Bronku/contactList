@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using server.Data;
 using server.Models;
@@ -14,44 +15,40 @@ namespace server.Controllers;
 public class AuthController(
     ApplicationDbContext db,
     SigningCredentials credentials,
-    IPasswordHasher<User> hasher)
+    IPasswordHasher<User> hasher,
+    IConfiguration configuration)
     : ControllerBase
 {
+    // POST at /api/Auth takes in {"username":"", "password":""}, and returns a JWT token if credentials are valid
     [HttpPost]
     [AllowAnonymous]
-    public IActionResult Login([FromBody] LoginCredentials loginCredentials)
+    public async Task<IActionResult> Login([FromBody] LoginCredentials loginCredentials)
     {
-        var user = db.Users.FirstOrDefault(u => u.Username == loginCredentials.Username);
+        var user = await db.Users.FirstOrDefaultAsync(u => u.Username == loginCredentials.Username);
         if (user == null) return NotFound($"User {loginCredentials.Username} not found");
 
-        // should never happen, and this property is required in database, and so every query should return it
-        if (user.PasswordHash == null)
-            return NotFound($"Couldn't find password hash for user {loginCredentials.Username}");
-
+        // user.PasswordHash is never null since, it's returned from a database, where it is a required element
+        // in any case the server would just return a 500 error if it was in fact null
         var result = hasher.VerifyHashedPassword(
             user,
-            user.PasswordHash,
+            user.PasswordHash!,
             loginCredentials.Password
         );
         if (result != PasswordVerificationResult.Success) return Unauthorized("invalid password");
 
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
+        var expirationTime = int.Parse(configuration["Jwt:ExpireMinutes"]!);
 
         var token = new JwtSecurityToken(
-            /*claims not strictly necessary*/
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: DateTime.UtcNow.AddMinutes(expirationTime),
             signingCredentials: credentials
         );
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
         return Ok(new { token = tokenString });
     }
 
-    public class LoginCredentials
-    {
-        public required string Username { get; init; }
-        public required string Password { get; init; }
-    }
+    // used in parsing the form at POST /api/Auth
+    public record LoginCredentials(string Username, string Password);
 }

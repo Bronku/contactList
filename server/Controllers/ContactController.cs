@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -12,6 +13,7 @@ public class ContactController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult getContacts()
     {
         var users = _db.Contacts.OrderBy(u => u.Id).ToList();
@@ -19,6 +21,7 @@ public class ContactController : ControllerBase
     }
 
     [HttpGet("{Id}")]
+    [AllowAnonymous]
     public IActionResult getContact(int Id)
     {
         var contact = _db.Contacts.FirstOrDefault(u => u.Id == Id);
@@ -30,6 +33,7 @@ public class ContactController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult newContact([FromBody] Contact contact)
     {
         _db.Add(contact);
@@ -38,6 +42,7 @@ public class ContactController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize]
     public IActionResult updateContact([FromBody] Contact contact)
     {
         _db.Update(contact);

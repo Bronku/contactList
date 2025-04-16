@@ -1,30 +1,60 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+
 public partial class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var config = builder.Configuration;
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+        var credentails = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+        // #todo: check if a static value needs to be a singleton, or can it be handled in some other way?
+        builder.Services.AddSingleton(credentails);
+        builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         builder.Services.AddDbContext<ApplicationDbContext>();
         builder.Services.AddControllers();
-
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder
+            .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    IssuerSigningKey = securityKey,
+                };
+            });
+        builder.Services.AddAuthorization();
+        // #todo: simplify cors
         builder.Services.AddCors(options =>
         {
             options.AddPolicy(
                 "AllowSpecificOrigin",
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+                    builder
+                        .WithOrigins("http://localhost:5173")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 }
             );
         });
 
         var app = builder.Build();
         app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseCors("AllowSpecificOrigin");
         app.MapControllers();
-
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -33,10 +63,18 @@ public partial class Program
 
         using (var scope = app.Services.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            dbContext.Database.EnsureCreated();
-        }
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>();
+            db.Database.EnsureCreated();
 
+            if (!db.Users.Any())
+            {
+                var user = new User { Username = "admin" };
+                user.PasswordHash = hasher.HashPassword(user, "secret");
+                db.Users.Add(user);
+                db.SaveChanges();
+            }
+        }
         app.Run();
     }
 }

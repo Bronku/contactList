@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 public class ApplicationDbContext : DbContext
 {
     public required DbSet<Contact> Contacts { get; set; }
+    public required DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -16,6 +17,7 @@ public class ApplicationDbContext : DbContext
     {
         modelBuilder.Entity<Contact>().Property(u => u.Category).HasConversion<string>();
         modelBuilder.Entity<Contact>().Property(u => u.BusinessCategory).HasConversion<string>();
+        modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
 
         base.OnModelCreating(modelBuilder);
     }

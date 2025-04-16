@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.Models;
 
@@ -9,38 +10,47 @@ namespace server.Controllers;
 [Route("api/[controller]")]
 public class ContactController(ApplicationDbContext db) : ControllerBase
 {
+    // GET /api/Contact returns a list of all contacts
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult GetContacts()
+    public async Task<IActionResult> GetContacts()
     {
-        var users = db.Contacts.OrderBy(u => u.Id).ToList();
+        var users = await db.Contacts.ToListAsync();
         return Ok(users);
     }
 
+    // GET /api/Contact/{int} returns one contact for the corresponding id 
+    // not used in the client application
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    public IActionResult GetContact(int id)
+    public async Task<IActionResult> GetContact(int id)
     {
-        var contact = db.Contacts.FirstOrDefault(u => u.Id == id);
+        // FirstOrDefault() instead of First to return a nice message
+        // First() would trigger an exception, which would cause the server to respond code 500
+        var contact = await db.Contacts.FirstOrDefaultAsync(u => u.Id == id);
         if (contact == null) return NotFound($"Contact {id} not found");
         return Ok(contact);
     }
 
+    // POST /api/Contact saves a new element to the database
+    // responds with an error when the form data is invalid
     [HttpPost]
     [Authorize]
-    public IActionResult NewContact([FromBody] Contact contact)
+    public async Task<IActionResult> NewContact([FromBody] Contact contact)
     {
         db.Add(contact);
-        db.SaveChanges();
+        await db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);
     }
 
+    // PUT /api/Contact updates an existing record 
+    // responds with an error when form data is invalid, or the element doesn't exist
     [HttpPut]
     [Authorize]
-    public IActionResult UpdateContact([FromBody] Contact contact)
+    public async Task<IActionResult> UpdateContact([FromBody] Contact contact)
     {
         db.Update(contact);
-        db.SaveChanges();
+        await db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);
     }
 }

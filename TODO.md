@@ -1,5 +1,6 @@
 # server
 - [ ] category validation
+- [ ] automatic id assignment
 - [x] password hashing
 - [x] authentication
 - [x] authorization
@@ -25,3 +26,4 @@
 - [ ] refresh details after editing them
 - [ ] frontend error messages
 - [ ] handling token expiration
+- [ ] prettier errors on invalid form

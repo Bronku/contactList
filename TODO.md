@@ -11,11 +11,11 @@
 - [x] logout button
 # auth
 - [x] configured program.cs
-- [x] login endboint
+- [x] login endpoint
 - [x] password verification in /login
 - [x] frontend for logging in
 - [x] initial users
-- [x] define public and proteced routes
+- [x] define public and protected routes
 # cleanup
 - [ ] a better location for .db
 - [ ] deal with cors

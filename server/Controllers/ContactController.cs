@@ -22,10 +22,7 @@ public class ContactController(ApplicationDbContext db) : ControllerBase
     public IActionResult GetContact(int id)
     {
         var contact = db.Contacts.FirstOrDefault(u => u.Id == id);
-        if (contact == null)
-        {
-            return NotFound($"Contact {id} not found");
-        }
+        if (contact == null) return NotFound($"Contact {id} not found");
         return Ok(contact);
     }
 

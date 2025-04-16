@@ -10,10 +10,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (!options.IsConfigured)
-        {
-            options.UseSqlite($"Data Source=database.db");
-        }
+        if (!options.IsConfigured) options.UseSqlite("Data Source=database.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -17,36 +17,23 @@ public class AuthController(
     IPasswordHasher<User> hasher)
     : ControllerBase
 {
-    public class LoginCredentials
-    {
-        public required string Username { get; init; }
-        public required string Password { get; init; }
-    }
-
     [HttpPost]
     [AllowAnonymous]
     public IActionResult Login([FromBody] LoginCredentials loginCredentials)
     {
         var user = db.Users.FirstOrDefault(u => u.Username == loginCredentials.Username);
-        if (user == null)
-        {
-            return NotFound($"User {loginCredentials.Username} not found");
-        }
+        if (user == null) return NotFound($"User {loginCredentials.Username} not found");
 
         // should never happen, and this property is required in database, and so every query should return it
         if (user.PasswordHash == null)
-        {
             return NotFound($"Couldn't find password hash for user {loginCredentials.Username}");
-        }
+
         var result = hasher.VerifyHashedPassword(
             user,
             user.PasswordHash,
             loginCredentials.Password
         );
-        if (result != PasswordVerificationResult.Success)
-        {
-            return Unauthorized("invalid password");
-        }
+        if (result != PasswordVerificationResult.Success) return Unauthorized("invalid password");
 
         var claims = new[] { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) };
 
@@ -60,5 +47,11 @@ public class AuthController(
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
         return Ok(new { token = tokenString });
+    }
+
+    public class LoginCredentials
+    {
+        public required string Username { get; init; }
+        public required string Password { get; init; }
     }
 }

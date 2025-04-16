@@ -40,6 +40,9 @@ public class Contact
     [Required] public ContactCategory Category { get; init; }
 
     public BusinessCategory? BusinessCategory { get; init; }
+   
+    [MaxLength(2048)] 
+    public string? OtherCategory { get; init; }
 
     public DateTime? DateOfBirth { get; init; }
 

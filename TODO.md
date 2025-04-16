@@ -22,3 +22,6 @@
 - [ ] refactor frontend
 - [ ] uniform .js config
 - [ ] a way to add new users
+- [ ] refresh details after editing them
+- [ ] frontend error messages
+- [ ] handling token expiration

@@ -104,6 +104,7 @@ onMounted(() => {
       :contact="selectedContact"
       @close="closeDetails"
       @edit-contact="editContact"
+      @reload="fetchData"
     />
     <Table
       v-if="contacts"

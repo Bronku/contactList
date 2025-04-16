@@ -1,9 +1,39 @@
 <script setup>
 import { authStore } from "@/stores/auth";
+import {ref} from "vue";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const props = defineProps({
   contact: Object,
 });
-const emit = defineEmits(["close", "editContact"]);
+const emit = defineEmits(["close", "editContact", "reload"]);
+const isSubmitting = ref(false);
+async function deleteContact() {
+  if (isSubmitting.value) {
+    return;
+  }
+  isSubmitting.value = true;
+  try {
+    const response = await fetch(`${API_BASE_URL}/Contact/${props.contact.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authStore.token}`,
+      }
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      throw new Error(`Failed to delete contact, ${errorMessage}`);
+    }
+    alert("Contact deleted!");
+    emit("reload");
+    emit("close");
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isSubmitting.value = false;
+  }
+}
 </script>
 
 <template>
@@ -45,5 +75,11 @@ const emit = defineEmits(["close", "editContact"]);
     :disabled="!authStore.isAuthenticated()"
   >
     edit
+  </button>
+  <button
+      @click.prevent="deleteContact"
+      :disabled="!authStore.isAuthenticated()"
+  >
+    delete
   </button>
 </template>

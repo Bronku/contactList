@@ -2,7 +2,7 @@
 - [ ] category validation
 - [ ] automatic id assignment
 - [ ] other category field in ui
-- [ ] entry deletion
+- [x] entry deletion
 - [x] password hashing
 - [x] authentication
 - [x] authorization

@@ -53,4 +53,17 @@ public class ContactController(ApplicationDbContext db) : ControllerBase
         await db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);
     }
+
+    // DELETE /api/Contact/{int} deletes the contact from database
+    // responds with NotFound when there is no such contact, no news is good news
+    [HttpDelete("{id:int}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteContact(int id)
+    {
+        var contact = await db.Contacts.FirstOrDefaultAsync(u => u.Id == id);
+        if (contact == null) return NotFound($"Contact {id} not found");
+        db.Remove(contact);
+        await db.SaveChangesAsync();
+        return NoContent();
+    }
 }

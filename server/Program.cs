@@ -16,7 +16,6 @@ public static class Program
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        // #todo: check if a static value needs to be a singleton, or can it be handled in some other way?
         builder.Services.AddSingleton(credentials);
         builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         builder.Services.AddDbContext<ApplicationDbContext>();
@@ -33,31 +32,24 @@ public static class Program
                     ValidateIssuerSigningKey = true,
                     ValidateAudience = false,
                     ValidateIssuer = false,
-                    IssuerSigningKey = securityKey,
+                    IssuerSigningKey = securityKey
                 };
             });
         builder.Services.AddAuthorization();
-        // #todo: simplify cors
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy(
-                "AllowSpecificOrigin",
-                corsPolicyBuilder =>
-                {
-                    corsPolicyBuilder
-                        .WithOrigins("http://localhost:5173")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                }
-            );
+            options.AddDefaultPolicy(policy =>
+                policy.WithOrigins("http://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
         });
 
         var app = builder.Build();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseCors("AllowSpecificOrigin");
+        app.UseCors();
         app.MapControllers();
         if (app.Environment.IsDevelopment())
         {
@@ -79,6 +71,7 @@ public static class Program
                 db.SaveChanges();
             }
         }
+
         app.Run();
     }
 }

@@ -10,7 +10,7 @@
 - [x] adding users
 - [x] modifying users
 - [x] login page
-- [ ] logout button
+- [x] logout button
 - [ ] uniform .js config
 - [ ] refactor frontend
 # auth

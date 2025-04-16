@@ -80,6 +80,12 @@ onMounted(() => {
   <main>
     <LoginDialog v-if="!authStore.isAuthenticated()" />
     <button
+      v-if="authStore.isAuthenticated()"
+      @click.prevent="authStore.logout"
+    >
+      logout
+    </button>
+    <button
       v-if="!editedContact"
       @click.prevent="newContact"
       :disabled="!authStore.isAuthenticated()"

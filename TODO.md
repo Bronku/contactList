@@ -23,7 +23,7 @@
 # cleanup
 - [x] a better location for .db
 - [x] deal with cors
-- [ ] the date doesn't update in the editor
+- [x] the date doesn't update in the editor
 - [x] refactor frontend
 - [ ] a way to add new users
 - [x] refresh details after editing them

@@ -1,68 +1,43 @@
-import {reactive} from "vue";
-import {tokenStorage} from "@/storage/tokenStorage.ts";
+// src/storage/contactStorage.ts
+import {ref} from "vue";
 import type {contactType} from "@/types/contact.ts";
+import {contactService} from "@/services/contactService.ts";
 
-export const contactStorage = reactive({
-    contacts: [],
+export const contactStorage = {
+    contacts: ref<contactType[]>([]),
+    selectedContact: ref<contactType | null>(null),
+    editingContact: ref(false),
     async refresh() {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/Contact`);
-
-
-            if (!response.ok) {
-                return;
-            }
-            this.contacts = await response.json();
-        } catch (error) {
-            console.error(error);
-        }
+        this.contacts.value = await contactService.fetchContacts();
+        this.selectedContact.value = null;
     },
-    async deleteContact(contact: contactType | null) {
-        if (!contact) {
-            return;
-        }
-        await fetch(`${import.meta.env.VITE_API_URL}/Contact/${contact.id}`,
-            {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${tokenStorage.token}`,
-                }
-            });
-        await this.refresh()
+    selectContact(contact: contactType) {
+        this.selectedContact.value = {...contact};
     },
-    async updateContact(contact: contactType | null) {
-        if (!contact) {
-            return;
-        }
-        await fetch(`${import.meta.env.VITE_API_URL}/Contact`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${tokenStorage.token}`,
-                },
-                body: JSON.stringify(contact),
-            })
-        await this.refresh()
+    clearSelectedContact() {
+        this.selectedContact.value = null;
     },
-    async createContact(contact: contactType | null) {
-        if (!contact) {
-            return;
+    async saveContact() {
+        if (!this.selectedContact.value) return;
+        if (this.selectedContact.value.id == 0) {
+            console.log("adding contact");
+            await contactService.createContact(this.selectedContact.value);
+        } else {
+            await contactService.updateContact(this.selectedContact.value);
         }
-        await fetch(`${import.meta.env.VITE_API_URL}/Contact`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${tokenStorage.token}`,
-                },
-                body: JSON.stringify(contact),
-            })
-        await this.refresh()
+        this.selectedContact.value = null;
+        this.editingContact.value = false;
+        await this.refresh();
     },
-    newContact(): contactType {
-        return {
+    async deleteContact() {
+        if (!this.selectedContact.value) return;
+        await contactService.deleteContact(this.selectedContact.value.id);
+        this.selectedContact.value = null;
+        this.editingContact.value = false;
+        await this.refresh();
+    },
+    newContact() {
+        this.selectedContact.value = {
             businessCategory: 0,
             category: 0,
             dateOfBirth: "",
@@ -74,20 +49,6 @@ export const contactStorage = reactive({
             phoneNumber: "",
             surname: "",
         };
+        this.editingContact.value = true;
     },
-    clone(input: contactType): contactType {
-        return {
-            businessCategory: input.businessCategory,
-            category: input.category,
-            dateOfBirth: input.dateOfBirth,
-            email: input.email,
-            id: input.id,
-            name: input.name,
-            otherCategory: input.otherCategory,
-            password: input.password,
-            phoneNumber: input.phoneNumber,
-            surname: input.surname,
-        };
-    }
-
-})
+};

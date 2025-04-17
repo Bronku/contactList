@@ -1,80 +1,74 @@
 <script lang="ts" setup>
-import {reactive, ref, watch} from "vue";
+import {ref} from "vue";
 import {contactStorage} from "@/storage/contactStorage.ts";
-import type {contactType} from "@/types/contact.ts";
-
-const props = defineProps<{
-    contact: contactType | null,
-    editing: boolean
-}>();
 
 const isSubmitting = ref(false);
-const emit = defineEmits(["close"]);
 
-const localContact = reactive(contactStorage.newContact());
-watch(() => props.contact, (newContact: contactType | null) => {
-    Object.assign(localContact, newContact);
-}, {immediate: true});
+function closeEditor() {
+    contactStorage.editingContact.value = false;
+    contactStorage.selectedContact.value = null;
+}
 
 async function handleSubmit() {
-    if (isSubmitting.value) {
-        return;
-    }
+    if (isSubmitting.value) return;
     isSubmitting.value = true;
-    if (props.editing) {
-        await contactStorage.updateContact(localContact);
-    } else {
-        await contactStorage.createContact(localContact);
+    try {
+        await contactStorage.saveContact();
+    } catch (e) {
+        console.error(e);
     }
     isSubmitting.value = false;
-    emit("close");
 }
 </script>
 
 <template>
     <h2> Edit</h2>
-    <form @submit.prevent="handleSubmit">
+    <form v-if="contactStorage.selectedContact.value" @submit.prevent="handleSubmit">
         <ul>
             <li>
                 <label>Business Category</label><br/>
-                <input v-model="localContact.businessCategory" type="number"/>
+                <input v-model="contactStorage.selectedContact.value.businessCategory"
+                       type="number"/>
             </li>
             <li>
                 <label>Category</label><br/>
-                <input v-model="localContact.category" type="number"/>
+                <input v-model="contactStorage.selectedContact.value.category" type="number"/>
             </li>
             <li>
                 <label>Date of Birth</label><br/>
-                <input v-model="localContact.dateOfBirth" type="date"/>
+                <input v-model="contactStorage.selectedContact.value.dateOfBirth" type="date"/>
             </li>
             <li>
                 <label>Email</label><br/>
-                <input v-model="localContact.email" type="email"/>
+                <input v-model="contactStorage.selectedContact.value.email" type="email"/>
             </li>
             <li>
                 <label>ID</label><br/>
-                <input v-model="localContact.id" :readonly="localContact.id != 0" type="number"/>
+                <input v-model="contactStorage.selectedContact.value.id" type="number"/>
             </li>
             <li>
                 <label>Name</label><br/>
-                <input v-model="localContact.name"/>
+                <input v-model="contactStorage.selectedContact.value.name"/>
             </li>
             <li>
                 <label>Password</label><br/>
-                <input v-model="localContact.password" type="password"/>
+                <input v-model="contactStorage.selectedContact.value.password" type="password"/>
             </li>
             <li>
                 <label>Phone Number</label><br/>
-                <input v-model="localContact.phoneNumber"/>
+                <input v-model="contactStorage.selectedContact.value.phoneNumber"/>
             </li>
             <li>
                 <label>Surname</label><br/>
-                <input v-model="localContact.surname"/>
+                <input v-model="contactStorage.selectedContact.value.surname"/>
             </li>
         </ul>
         <button :disabled="isSubmitting" type="submit">
             {{ isSubmitting ? "Saving" : "Save" }}
         </button>
-        <button type="button" @click="emit('close')">Close</button>
+        <button :disabled="isSubmitting" @click.prevent="contactStorage.deleteContact()">
+            delete
+        </button>
+        <button type="button" @click="closeEditor">Close</button>
     </form>
 </template>

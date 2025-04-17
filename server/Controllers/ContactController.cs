@@ -38,6 +38,7 @@ public class ContactController(ApplicationDbContext db) : ControllerBase
     [Authorize]
     public async Task<IActionResult> NewContact([FromBody] Contact contact)
     {
+        if (contact.Id != 0) return BadRequest();
         db.Add(contact);
         await db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);

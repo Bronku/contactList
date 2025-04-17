@@ -1,26 +1,18 @@
 <script lang="ts" setup>
-import {type Ref, ref} from "vue";
 import ContactDetails from "@/components/ContactDetails.vue";
 import type {contactType} from "@/types/contact.ts";
-
-defineProps<{
-    contacts: contactType[]
-}>();
-
-const selectedContact: Ref<contactType | null> = ref(null)
-
-function selectContact(contact: contactType) {
-    selectedContact.value = contact;
-}
-
-function closeContact() {
-    selectedContact.value = null;
-}
+import {contactStorage} from "@/storage/contactStorage.ts";
+import ContactEditor from "@/components/ContactEditor.vue";
 </script>
 
 <template>
     <div>
-        <ContactDetails v-if="selectedContact" :contact="selectedContact" @close="closeContact"/>
+        <ContactDetails
+            v-if="contactStorage.selectedContact.value && !contactStorage.editingContact.value"/>
+        <ContactEditor v-if="contactStorage.editingContact.value"/>
+        <button v-if="!contactStorage.editingContact.value && !contactStorage.selectedContact.value"
+                @click.prevent="contactStorage.newContact()">new
+        </button>
         <table>
             <thead>
             <tr>
@@ -30,9 +22,10 @@ function closeContact() {
                 <th>PhoneNumber</th>
             </tr>
             </thead>
-            <tr v-for="contact in contacts" :key="contact.id">
+            <tr v-for="contact in contactStorage.contacts.value as contactType[]"
+                :key="contact.id">
                 <th>
-                    <button @click.prevent="selectContact(contact)">
+                    <button @click.prevent="contactStorage.selectContact(contact)">
                         {{ contact.id }}
                     </button>
                 </th>

@@ -3,7 +3,6 @@ import LoginDialog from "@/components/LoginDialog.vue";
 import ContactList from "@/components/ContactList.vue";
 import {tokenStorage} from "@/storage/tokenStorage.ts";
 import {contactStorage} from "@/storage/contactStorage.ts";
-import NewContact from "@/components/NewContact.vue";
 
 contactStorage.refresh();
 </script>
@@ -14,7 +13,6 @@ contactStorage.refresh();
         <button v-if="tokenStorage.isAuthenticated()" @click.prevent="tokenStorage.clearToken">
             logout
         </button>
-        <NewContact/>
-        <ContactList :contacts="contactStorage.contacts"/>
+        <ContactList/>
     </main>
 </template>

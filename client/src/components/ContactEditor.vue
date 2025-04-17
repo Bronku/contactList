@@ -25,8 +25,8 @@ async function handleSubmit() {
 <template>
     <h2>Edit</h2>
     <form v-if="contactStorage.selectedContact.value" @submit.prevent="handleSubmit">
+        <input v-model="contactStorage.selectedContact.value.id" hidden type="number" />
         <ul>
-            <input v-model="contactStorage.selectedContact.value.id" hidden type="number" />
             <li>
                 <label>Category</label><br />
                 <select v-model="contactStorage.selectedContact.value.contactCategoryId">

@@ -28,6 +28,6 @@
 - [ ] a way to add new users
 - [x] refresh details after editing them
 - [ ] frontend error messages
-- [ ] handling token expiration
+- [x] handling token expiration
 - [ ] prettier errors on invalid form
 - [x] fix mutation of contact prop

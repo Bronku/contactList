@@ -84,8 +84,8 @@ public static class Program
 
             if (!db.Users.Any())
             {
-                var user = new User { Username = "admin" };
-                user.PasswordHash = hasher.HashPassword(user, "secret");
+                var user = new User { Username = config["Admin:login"]! };
+                user.PasswordHash = hasher.HashPassword(user, config["Admin:password"]!);
                 db.Users.Add(user);
                 db.SaveChanges();
             }

@@ -25,7 +25,7 @@
 - [x] deal with cors
 - [x] the date doesn't update in the editor
 - [x] refactor frontend
-- [ ] a way to add new users
+- [x] a way to add new users
 - [x] refresh details after editing them
 - [ ] frontend error messages
 - [x] handling token expiration

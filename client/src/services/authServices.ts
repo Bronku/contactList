@@ -46,3 +46,26 @@ export async function sendLogin(username: string, password: string) {
         return `Unauthorized, ${error}`
     }
 }
+
+export async function sendRegister(username: string, password: string) {
+    if (isExpired(tokenStorage.token)) {
+        tokenStorage.clearToken()
+        return 'unauthorized'
+    }
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/Auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${tokenStorage.token}`,
+            },
+            body: JSON.stringify({ username, password }),
+        })
+        if (!response.ok) {
+            return `Invalid register: ${username}`
+        }
+        return ''
+    } catch (error) {
+        return `${error}`
+    }
+}

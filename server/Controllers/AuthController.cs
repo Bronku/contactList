@@ -49,6 +49,22 @@ public class AuthController(
         return Ok(new { token = tokenString });
     }
 
+    // POST at /api/Auth/register allows to add new users
+    // only logged-in users can create new ones
+    [HttpPost("register")]
+    [Authorize]
+    public async Task<IActionResult> Register([FromBody] LoginCredentials loginCredentials)
+    {
+        var user = await db.Users.FirstOrDefaultAsync(u => u.Username == loginCredentials.Username);
+        if (user != null) return BadRequest("Username already exists");
+
+        user = new User { Username = loginCredentials.Username };
+        user.PasswordHash = hasher.HashPassword(user, loginCredentials.Password);
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
+        return Ok();
+    }
+
     // used in parsing the form at POST /api/Auth
     public record LoginCredentials(string Username, string Password);
 }

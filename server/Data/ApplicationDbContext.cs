@@ -16,6 +16,8 @@ public class ApplicationDbContext(IConfiguration configuration) : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+        modelBuilder.Entity<Contact>().HasIndex(c => c.Id).IsUnique();
+        modelBuilder.Entity<Contact>().Property(c => c.Id).ValueGeneratedOnAdd();
 
         base.OnModelCreating(modelBuilder);
     }

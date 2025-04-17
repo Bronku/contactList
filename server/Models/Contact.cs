@@ -2,25 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace server.Models;
 
-public enum ContactCategory
-{
-    Business,
-    Personal,
-    Other
-}
-
-public enum BusinessCategory
-{
-    Boss,
-    Client,
-    Manager,
-    Developer,
-    Hr
-}
-
-// MaxLength of 2048 seems reasonable for any contact information string, and setting it in advance is faster
+// MaxLength of 2048 seems reasonable for any contact information string
+// setting it in advance could potentially make the application faster
 public class Contact
 {
+    // autoincremented primary key by default
     public int Id { get; init; }
     [Required] [MaxLength(2048)] public required string Name { get; init; }
 
@@ -37,9 +23,9 @@ public class Contact
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$")]
     public required string Password { get; init; }
 
-    [Required] public ContactCategory Category { get; init; }
+    [Required] public required int ContactCategoryId { get; init; }
 
-    public BusinessCategory? BusinessCategory { get; init; }
+    public int? BusinessCategoryId { get; init; }
 
     [MaxLength(2048)] public string? OtherCategory { get; init; }
 

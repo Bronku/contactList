@@ -7,6 +7,8 @@ public class ApplicationDbContext(IConfiguration configuration) : DbContext
 {
     public required DbSet<Contact> Contacts { get; set; }
     public required DbSet<User> Users { get; set; }
+    public required DbSet<ContactCategoryEntity> ContactCategoryEntities { get; set; }
+    public required DbSet<BusinessCategoryEntity> BusinessCategories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -16,8 +18,10 @@ public class ApplicationDbContext(IConfiguration configuration) : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
-        modelBuilder.Entity<Contact>().HasIndex(c => c.Id).IsUnique();
-        modelBuilder.Entity<Contact>().Property(c => c.Id).ValueGeneratedOnAdd();
+        modelBuilder.Entity<Contact>().HasOne<ContactCategoryEntity>().WithMany()
+            .HasForeignKey(c => c.ContactCategoryId);
+        modelBuilder.Entity<Contact>().HasOne<BusinessCategoryEntity>().WithMany()
+            .HasForeignKey(c => c.BusinessCategoryId);
 
         base.OnModelCreating(modelBuilder);
     }

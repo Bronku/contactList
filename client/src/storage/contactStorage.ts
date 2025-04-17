@@ -20,7 +20,6 @@ export const contactStorage = {
     async saveContact() {
         if (!this.selectedContact.value) return;
         if (this.selectedContact.value.id == 0) {
-            console.log("adding contact");
             await contactService.createContact(this.selectedContact.value);
         } else {
             await contactService.updateContact(this.selectedContact.value);
@@ -38,8 +37,8 @@ export const contactStorage = {
     },
     newContact() {
         this.selectedContact.value = {
-            businessCategory: 0,
-            category: 0,
+            businessCategoryId: 0,
+            contactCategoryId: 0,
             dateOfBirth: "",
             email: "",
             id: 0,

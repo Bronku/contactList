@@ -89,6 +89,32 @@ public static class Program
                 db.Users.Add(user);
                 db.SaveChanges();
             }
+
+            if (!db.BusinessCategories.Any())
+            {
+                var categories = new List<ContactCategoryEntity>
+                {
+                    new() { Name = "Business" },
+                    new() { Name = "Personal" },
+                    new() { Name = "Other" }
+                };
+                db.ContactCategoryEntities.AddRange(categories);
+                db.SaveChanges();
+            }
+
+            if (!db.BusinessCategories.Any())
+            {
+                var categories = new List<BusinessCategoryEntity>
+                {
+                    new() { Name = "Boss" },
+                    new() { Name = "Client" },
+                    new() { Name = "Manager" },
+                    new() { Name = "Developer" },
+                    new() { Name = "Hr" }
+                };
+                db.BusinessCategories.AddRange(categories);
+                db.SaveChanges();
+            }
         }
 
         app.Run();

@@ -27,12 +27,13 @@ async function handleSubmit() {
         <ul>
             <li>
                 <label>Business Category</label><br/>
-                <input v-model="contactStorage.selectedContact.value.businessCategory"
+                <input v-model="contactStorage.selectedContact.value.businessCategoryId"
                        type="number"/>
             </li>
             <li>
                 <label>Category</label><br/>
-                <input v-model="contactStorage.selectedContact.value.category" type="number"/>
+                <input v-model="contactStorage.selectedContact.value.contactCategoryId"
+                       type="number"/>
             </li>
             <li>
                 <label>Date of Birth</label><br/>

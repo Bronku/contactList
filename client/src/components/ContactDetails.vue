@@ -9,11 +9,11 @@ import {contactStorage} from "@/storage/contactStorage.ts";
     <ul v-if="contactStorage.selectedContact.value">
         <li>
             <span>businessCategory</span>
-            <br/><span>{{ contactStorage.selectedContact.value.businessCategory }}</span>
+            <br/><span>{{ contactStorage.selectedContact.value.businessCategoryId }}</span>
         </li>
         <li>
             <span>category</span> <br/><span>{{
-                contactStorage.selectedContact.value.category
+                contactStorage.selectedContact.value.contactCategoryId
             }}</span>
         </li>
         <li>

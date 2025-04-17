@@ -67,4 +67,22 @@ public class ContactController(ApplicationDbContext db) : ControllerBase
         await db.SaveChangesAsync();
         return NoContent();
     }
+
+    // GET /api/Contact/categories responds with available categories
+    [HttpGet("categories")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Categories()
+    {
+        var categories = await db.ContactCategoryEntities.ToListAsync();
+        return Ok(categories);
+    }
+
+    // GET /api/Contact/categories responds with available categories
+    [HttpGet("categories/business")]
+    [AllowAnonymous]
+    public async Task<IActionResult> BusinessCategories()
+    {
+        var categories = await db.BusinessCategories.ToListAsync();
+        return Ok(categories);
+    }
 }

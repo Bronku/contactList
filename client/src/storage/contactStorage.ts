@@ -1,5 +1,6 @@
 import {reactive} from "vue";
 import {tokenStorage} from "@/storage/tokenStorage.ts";
+import type {contactType} from "@/types/contact.ts";
 
 export const contactStorage = reactive({
     contacts: [],
@@ -11,15 +12,15 @@ export const contactStorage = reactive({
             if (!response.ok) {
                 return;
             }
-            //console.log(response);
-            const body = await response.json();
-            this.contacts = body
-            //console.log(body);
+            this.contacts = await response.json();
         } catch (error) {
             console.error(error);
         }
     },
-    async deleteContact(contact) {
+    async deleteContact(contact: contactType | null) {
+        if (!contact) {
+            return;
+        }
         await fetch(`${import.meta.env.VITE_API_URL}/Contact/${contact.id}`,
             {
                 method: "DELETE",
@@ -30,7 +31,10 @@ export const contactStorage = reactive({
             });
         await this.refresh()
     },
-    async updateContact(contact) {
+    async updateContact(contact: contactType | null) {
+        if (!contact) {
+            return;
+        }
         await fetch(`${import.meta.env.VITE_API_URL}/Contact`,
             {
                 method: "PUT",
@@ -42,7 +46,10 @@ export const contactStorage = reactive({
             })
         await this.refresh()
     },
-    async createContact(contact) {
+    async createContact(contact: contactType | null) {
+        if (!contact) {
+            return;
+        }
         await fetch(`${import.meta.env.VITE_API_URL}/Contact`,
             {
                 method: "POST",
@@ -54,30 +61,33 @@ export const contactStorage = reactive({
             })
         await this.refresh()
     },
-    newContact() {
-        const output = {};
-        output.businessCategory = 0;
-        output.category = 0;
-        output.dateOfBirth = "";
-        output.email = "";
-        output.id = 0;
-        output.name = "";
-        output.phoneNumber = "";
-        output.surname = "";
-        return output;
+    newContact(): contactType {
+        return {
+            businessCategory: 0,
+            category: 0,
+            dateOfBirth: "",
+            email: "",
+            id: 0,
+            name: "",
+            otherCategory: "",
+            password: "",
+            phoneNumber: "",
+            surname: "",
+        };
     },
-    clone(input) {
-        const output = {};
-        output.businessCategory = input.businessCategory;
-        output.category = input.category;
-        output.dateOfBirth = input.dateOfBirth;
-        output.email = input.email;
-        output.id = input.id;
-        output.name = input.name;
-        output.password = input.password;
-        output.phoneNumber = input.phoneNumber;
-        output.surname = input.surname;
-        return output;
+    clone(input: contactType): contactType {
+        return {
+            businessCategory: input.businessCategory,
+            category: input.category,
+            dateOfBirth: input.dateOfBirth,
+            email: input.email,
+            id: input.id,
+            name: input.name,
+            otherCategory: input.otherCategory,
+            password: input.password,
+            phoneNumber: input.phoneNumber,
+            surname: input.surname,
+        };
     }
 
 })

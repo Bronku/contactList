@@ -22,6 +22,7 @@
 # cleanup
 - [x] a better location for .db
 - [x] deal with cors
+- [ ] the date doesn't update in the editor
 - [ ] refactor frontend
 - [ ] uniform .js config
 - [ ] a way to add new users
@@ -29,3 +30,4 @@
 - [ ] frontend error messages
 - [ ] handling token expiration
 - [ ] prettier errors on invalid form
+- [ ] fix mutation of contact prop

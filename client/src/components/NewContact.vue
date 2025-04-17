@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import {contactStorage} from "@/storage/contactStorage.ts";
-import {ref} from "vue";
-import Editor from "@/components/Editor.vue";
+import {type Ref, ref} from "vue";
+import ContactEditor from "@/components/ContactEditor.vue";
+import type {contactType} from "@/types/contact.ts";
 
-const editedContact = ref(null);
+const editedContact: Ref<contactType | null> = ref(null);
 
 function openEditor() {
     editedContact.value = contactStorage.newContact();
@@ -17,5 +18,6 @@ function closeEditor() {
 
 <template>
     <button v-if="!editedContact" @click.prevent="openEditor">new</button>
-    <Editor v-if="editedContact" :contact="editedContact" :editing="false" @close="closeEditor"/>
+    <ContactEditor v-if="editedContact" :contact="editedContact" :editing="false"
+                   @close="closeEditor"/>
 </template>

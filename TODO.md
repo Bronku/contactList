@@ -1,8 +1,8 @@
 # server
-- [ ] category validation
-- [ ] automatic id assignment
-- [ ] other category field in ui
-- [ ] foreign key constraint not checked when it's not used in business category
+- [x] category validation
+- [x] automatic id assignment
+- [x] other category field in ui
+- [x] foreign key constraint not checked when it's not used in business category
 - [x] entry deletion
 - [x] password hashing
 - [x] authentication
@@ -24,11 +24,10 @@
 - [x] a better location for .db
 - [x] deal with cors
 - [ ] the date doesn't update in the editor
-- [ ] refactor frontend
-- [ ] uniform .js config
+- [x] refactor frontend
 - [ ] a way to add new users
-- [ ] refresh details after editing them
+- [x] refresh details after editing them
 - [ ] frontend error messages
 - [ ] handling token expiration
 - [ ] prettier errors on invalid form
-- [ ] fix mutation of contact prop
+- [x] fix mutation of contact prop

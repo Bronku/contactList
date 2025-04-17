@@ -25,7 +25,7 @@ public class Contact
 
     [Required] public required int ContactCategoryId { get; init; }
 
-    public int? BusinessCategoryId { get; init; }
+    public int? BusinessCategoryId { get; set; }
 
     [MaxLength(2048)] public string? OtherCategory { get; init; }
 

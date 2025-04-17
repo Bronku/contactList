@@ -39,6 +39,9 @@ public class ContactController(ApplicationDbContext db) : ControllerBase
     public async Task<IActionResult> NewContact([FromBody] Contact contact)
     {
         if (contact.Id != 0) return BadRequest();
+        // allows to not specify the business category when it's not needed
+        // without it the database validation fails
+        if (contact.BusinessCategoryId == 0) contact.BusinessCategoryId = null;
         db.Add(contact);
         await db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);
@@ -50,6 +53,8 @@ public class ContactController(ApplicationDbContext db) : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateContact([FromBody] Contact contact)
     {
+        // see NewContact()
+        if (contact.BusinessCategoryId == 0) contact.BusinessCategoryId = null;
         db.Update(contact);
         await db.SaveChangesAsync();
         return CreatedAtAction(nameof(GetContact), new { contact.Id }, contact);

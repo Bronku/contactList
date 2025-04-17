@@ -2,6 +2,7 @@
 - [ ] category validation
 - [ ] automatic id assignment
 - [ ] other category field in ui
+- [ ] foreign key constraint not checked when it's not used in business category
 - [x] entry deletion
 - [x] password hashing
 - [x] authentication

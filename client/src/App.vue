@@ -3,8 +3,10 @@ import LoginDialog from "@/components/LoginDialog.vue";
 import ContactList from "@/components/ContactList.vue";
 import {tokenStorage} from "@/storage/tokenStorage.ts";
 import {contactStorage} from "@/storage/contactStorage.ts";
+import {optionStorage} from "@/storage/optionStorage.ts";
 
 contactStorage.refresh();
+optionStorage.refresh();
 </script>
 
 <template>
